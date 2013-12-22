@@ -70,11 +70,7 @@ class MakeWall < RubyPlugin
       give_item(sender, item_to_number(item_type), quantity)
       true
     when "bridge"
-      length = args.first || 5
-      sender.send_message "Building bridge #{length} blocks long..."
-      starting_location = sender.get_location
-      starting_location.set_y(starting_location.get_y - 1)
-      change_blocks(get_environment(starting_location), item_to_number('stone'), length, 1)
+      Bridge.new(sender, agrs.first).build
       true
     when "extinguish"
       sender.send_message "Fire Bad!!!"
@@ -178,6 +174,20 @@ class Tunnel
   def build
     sender.send_message "Digging tunnel #{depth} blocks deep..."
     break_blocks(get_environment(sender.get_location), depth)
+  end
+end
+
+class Bridge
+  include PluginUtils
+  def intialize(sender, length=5)
+    @sender, @length = sender, length
+  end
+
+  def build
+    sender.send_message "Building bridge #{@length} blocks long..."
+    starting_location = @sender.get_location
+    starting_location.set_y(starting_location.get_y - 1)
+    change_blocks(get_environment(starting_location), item_to_number('stone'), @length, 1)
   end
 end
 
